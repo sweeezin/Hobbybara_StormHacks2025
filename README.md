@@ -11,3 +11,7 @@
 -sudo apt install npm
 
 #How to run
+-navigate inside hobby-connect
+-run npm install in terminal
+-then npm run dev
+-go to http://localhost:3000 in ur browser
