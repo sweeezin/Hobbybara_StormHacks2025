@@ -125,6 +125,16 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  min-height: 100%;
+}
+
   body {
     line-height: inherit;
   }
@@ -363,7 +373,7 @@
   }
 
   body {
-    background-color: var(--background);
+    background-color: #809671; /* green background */
     color: var(--foreground);
   }
 
