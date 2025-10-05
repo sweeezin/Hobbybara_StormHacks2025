@@ -1,51 +1,102 @@
-import { DeployButton } from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import { AuthButton } from "@/components/auth-button";
-import { Hero } from "@/components/hero";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { ConnectSupabaseSteps } from "@/components/tutorial/connect-supabase-steps";
-import { SignUpUserSteps } from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/lib/utils";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Check if user has completed profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('preferred_nickname')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.preferred_nickname) {
+          router.push('/dashboard');
+        } else {
+          router.push('/onboarding/profile');
+        }
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
-              <div className="flex items-center gap-2">
-                <DeployButton />
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <Card className="w-full max-w-4xl border-primary/30 shadow-2xl">
+        <CardHeader className="text-center space-y-6 pt-12">
+          <div className="space-y-4">
+            <h1 className="text-6xl font-bold merri-text">MerriMates</h1>
+            <p className="text-2xl merri-text/80 font-light">
+              Connect & Learn Through Hobbies
+            </p>
+          </div>
+        </CardHeader>
+        <CardContent className="pb-12">
+          <div className="max-w-2xl mx-auto space-y-8">
+            <p className="text-lg text-center merri-text/70">
+              Form meaningful connections by teaching each other hobbies. 
+              Connect with someone who wants to learn guitar while you want to learn fishing, 
+              and exchange skills!
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-6 my-12">
+              <div className="text-center space-y-2">
+                <div className="text-4xl mb-2">🎨</div>
+                <h3 className="font-semibold merri-text">160+ Hobbies</h3>
+                <p className="text-sm merri-text/60">From creative arts to athletics</p>
+              </div>
+              <div className="text-center space-y-2">
+                <div className="text-4xl mb-2">🤝</div>
+                <h3 className="font-semibold merri-text">Skill Exchange</h3>
+                <p className="text-sm merri-text/60">Teach what you know, learn what you want</p>
+              </div>
+              <div className="text-center space-y-2">
+                <div className="text-4xl mb-2">💬</div>
+                <h3 className="font-semibold merri-text">Connect & Chat</h3>
+                <p className="text-sm merri-text/60">Message and meet up with friends</p>
               </div>
             </div>
-            {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
-          </div>
-        </nav>
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
-          <Hero />
-          <main className="flex-1 flex flex-col gap-6 px-4">
-            <h2 className="font-medium text-xl mb-4">Next steps</h2>
-            {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-          </main>
-        </div>
 
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
-          <p>
-            Powered by{" "}
-            <a
-              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-              target="_blank"
-              className="font-bold hover:underline"
-              rel="noreferrer"
-            >
-              Supabase
-            </a>
-          </p>
-          <ThemeSwitcher />
-        </footer>
-      </div>
-    </main>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/auth/sign-up" className="flex-1 sm:flex-initial">
+                <Button 
+                  className="w-full merri-tab-bg hover:bg-primary/90 merri-text font-semibold text-lg py-6 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl"
+                >
+                  Get Started
+                </Button>
+              </Link>
+              <Link href="/auth/login" className="flex-1 sm:flex-initial">
+                <Button 
+                  variant="outline"
+                  className="w-full border-2 border-primary/30 merri-text hover:bg-primary/10 font-semibold text-lg py-6 px-8 rounded-xl"
+                >
+                  Login
+                </Button>
+              </Link>
+            </div>
+
+            <div className="text-center mt-8">
+              <p className="text-sm merri-text/60 italic">
+                "Because fuck Skillshare, our project makes people happy!" 🦛🐊
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

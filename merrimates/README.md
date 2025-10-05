@@ -1,105 +1,252 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# MerriMates - Connect & Learn Through Hobbies
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
-
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+MerriMates is a social platform that helps people form connections by teaching each other hobbies. Connect with someone who wants to learn guitar while you want to learn fishing, and exchange skills!
 
 ## Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+- **User Authentication**: Username-based login with email verification
+- **Profile Creation**: Multi-step onboarding with personality matching
+- **Hobby Matching**: Select from 160+ hobbies across 7 categories
+- **Friend System**: Add, block, and manage connections
+- **Messaging**: Real-time chat with friends
+- **Search & Filters**: Find users by hobby, location, age, and personality type
+- **Responsive Design**: Works on desktop and mobile
 
-## Demo
+## Tech Stack
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+- **Frontend**: Next.js 15 + React 19 + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui components
+- **Backend**: Supabase (PostgreSQL + Realtime + Auth + Storage)
+- **Hosting**: Vercel
+- **Font**: Merriweather from Google Fonts
 
-## Deploy to Vercel
+## Color Palette
 
-Vercel deployment will guide you through creating a Supabase account and project.
+- Background Gradient: `#809671` to `#b4c7a7`
+- Tabs/Buttons: `#48573e`
+- Font Color: `#faf2e6`
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+## Prerequisites
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+- Node.js 18+ and npm
+- A Supabase account (free tier works)
+- Git
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+## Getting Started
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+### 1. Clone the Repository
 
-## Clone and run locally
+```bash
+git clone https://github.com/yourusername/merrimates.git
+cd merrimates
+```
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+### 2. Install Dependencies
 
-2. Create a Next.js app using the Supabase Starter template npx command
+```bash
+npm install
+```
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+### 3. Set Up Supabase
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Go to Project Settings > API to get your keys
+3. Create a `.env.local` file in the root directory:
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-3. Use `cd` to change into the app's directory
+### 4. Set Up the Database
 
-   ```bash
-   cd with-supabase-app
-   ```
+1. Go to the SQL Editor in your Supabase dashboard
+2. Copy the contents of `supabase/migrations/001_initial_schema.sql`
+3. Paste and run it in the SQL Editor
 
-4. Rename `.env.example` to `.env.local` and update the following:
+This will create:
+- All necessary tables (profiles, hobbies, friendships, messages, etc.)
+- Row Level Security (RLS) policies
+- Indexes for performance
+- All 160 hobbies pre-populated
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
+### 5. Configure Supabase Auth
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+1. Go to Authentication > URL Configuration
+2. Add your site URL (e.g., `http://localhost:3000` for development)
+3. Add redirect URLs:
+   - `http://localhost:3000/auth/callback`
+   - `http://localhost:3000/onboarding/profile`
 
-5. You can now run the Next.js local development server:
+### 6. Run the Development Server
 
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+## Project Structure
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+```
+merrimates/
+├── app/
+│   ├── auth/                    # Authentication pages
+│   │   ├── login/              # Login page
+│   │   ├── sign-up/            # Sign up page
+│   │   └── forgot-password/    # Password reset
+│   ├── onboarding/             # Multi-step profile creation
+│   │   ├── profile/            # Basic info (name, age, location)
+│   │   ├── hobbies/            # Select your hobbies
+│   │   ├── learning/           # Select learning goals
+│   │   └── personality/        # Personality type matching
+│   ├── dashboard/              # Main dashboard
+│   ├── search/                 # Search for users
+│   ├── profile/                # View/edit profiles
+│   ├── friends/                # Friends management
+│   ├── messages/               # Messaging system
+│   ├── settings/               # User settings
+│   └── globals.css            # Global styles with custom colors
+├── components/
+│   ├── ui/                     # shadcn/ui components
+│   ├── login-form.tsx         # Login form component
+│   └── sign-up-form.tsx       # Sign up form component
+├── lib/
+│   ├── types.ts               # TypeScript interfaces
+│   ├── utils.ts               # Utility functions
+│   └── supabase/              # Supabase client configuration
+├── supabase/
+│   └── migrations/
+│       └── 001_initial_schema.sql  # Database schema
+└── DATABASE_SCHEMA.md         # Database documentation
+```
 
-## Feedback and issues
+## User Flow
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+1. **Sign Up**: User creates account with username, email, and password
+2. **Onboarding Step 1**: Enter nickname, age, pronouns, and location
+3. **Onboarding Step 2**: Select 1-10 hobbies they have
+4. **Onboarding Step 3**: Select 1-10 hobbies they want to learn
+5. **Onboarding Step 4**: Choose personality type (extrovert/introvert) and preference
+6. **Dashboard**: View friends, search for new connections
+7. **Search**: Find users with matching hobbies and interests
+8. **Connect**: Add friends and start messaging
 
-## More Supabase examples
+## Key Features Explained
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+### Age Validation
+
+- Users must be 15-116 years old
+- Fun error messages for invalid ages:
+  - Too young: "🥚 Oops! You're too young. Let us put you back in the egg!"
+  - Too old: "🦖 Okay dinosaur, we don't know how you survived that asteroid!"
+
+### Hobby Categories
+
+- **Creative**: Art, music, crafts, etc.
+- **Athletic**: Sports and physical activities
+- **Mind/Body**: Mental wellness and mindfulness
+- **Nature**: Outdoor and nature-based activities
+- **Social**: Group activities and entertainment
+- **Technical**: Technology and programming
+- **Relaxation**: Leisure activities
+
+### Username System
+
+- Case-insensitive (stored lowercase)
+- Max 20 characters
+- Unique across platform
+- Display version preserves original case
+
+### Matching Algorithm
+
+Users can find friends who:
+- Have hobbies they want to learn
+- Want to learn hobbies they have
+- Match their personality type preferences
+- Are in their location or region
+
+## Database Schema
+
+See `DATABASE_SCHEMA.md` for detailed information about:
+- Table structures
+- Relationships
+- Indexes
+- Row Level Security policies
+
+## API Routes
+
+- `POST /api/auth/username-login`: Login with username instead of email
+
+## Deployment
+
+### Deploy to Vercel
+
+1. Push your code to GitHub
+2. Import project in Vercel
+3. Add environment variables in Vercel dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Deploy!
+
+### Update Supabase Auth URLs
+
+After deployment, update your Supabase Auth URLs with your production domain.
+
+## Environment Variables
+
+Required variables for `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## Development Notes
+
+### Testing
+
+- Create multiple test accounts to test friend features
+- Use different hobby combinations to test matching
+- Test on both mobile and desktop viewports
+
+### Common Issues
+
+1. **TypeScript Errors**: These are type definition issues and don't affect functionality
+2. **Database Connection**: Ensure your Supabase credentials are correct
+3. **Auth Redirect**: Make sure redirect URLs are configured in Supabase
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+MIT License - feel free to use this project for learning or building your own version!
+
+## Support
+
+For issues or questions:
+- Open an issue on GitHub
+- Check the DATABASE_SCHEMA.md for database questions
+- Review Supabase documentation for auth issues
+
+## Future Enhancements
+
+- [ ] Video chat integration (WebRTC)
+- [ ] Mobile app (React Native)
+- [ ] Advanced matching algorithms
+- [ ] Event planning features
+- [ ] Skill verification system
+- [ ] Achievement badges
+- [ ] Profile customization
+- [ ] Hobby recommendations based on AI
+
+---
+
+Made with ❤️ by the MerriMates team
+
+"Because fuck Skillshare, our project makes people happy!" 🦛🐊
