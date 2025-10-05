@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
-import { Button } from './ui/button';
-import { Checkbox } from './ui/checkbox';
-import { Label } from './ui/label';
-import { hobbies, categories } from '../data/hobbies';
-import { ScrollArea } from './ui/scroll-area';
+import { useState, useMemo } from 'react'
+import { Button } from './ui/button'
+import { Checkbox } from './ui/checkbox'
+import { Label } from './ui/label'
+import { hobbies, categories } from '../data/hobbies'
+import { ScrollArea } from './ui/scroll-area'
 
 interface HobbiesPageProps {
   onComplete: (selectedHobbies: string[]) => void;

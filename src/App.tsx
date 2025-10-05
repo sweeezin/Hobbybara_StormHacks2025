@@ -8,7 +8,7 @@ import { PersonalityPage } from './components/PersonalityPage';
 import { WelcomePage } from './components/WelcomePage';
 import { MainPage } from './components/MainPage';
 import { User, Friend, Message, Conversation } from './types';
-import logoImage from 'figma:asset/028583a9d69cf6549ae89b1e29cda3c69534dfe3.png';
+import logoImage from 'figma:asset/8db2754dce63c68a63a57cfc11f0e5cc090f2cc9.png';
 
 export type Page = 
   | 'login' 
@@ -48,6 +48,16 @@ export default function App() {
       if (storedFriends) {
         setFriends(JSON.parse(storedFriends));
       }
+
+      const storedMessages = localStorage.getItem('merrimates_messages');
+      if (storedMessages) {
+        setMessages(JSON.parse(storedMessages));
+      }
+
+      const storedConversations = localStorage.getItem('merrimates_conversations');
+      if (storedConversations) {
+        setConversations(JSON.parse(storedConversations));
+      }
     } catch (error) {
       console.error('Error loading data from localStorage:', error);
     } finally {
@@ -55,40 +65,25 @@ export default function App() {
     }
   }, []);
 
-  // Save data to localStorage
+  // Save data to localStorage - consolidated to prevent too many re-renders
   useEffect(() => {
     if (!isLoading) {
       try {
         localStorage.setItem('merrimates_users', JSON.stringify(users));
-      } catch (error) {
-        console.error('Error saving users to localStorage:', error);
-      }
-    }
-  }, [users, isLoading]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      try {
+        localStorage.setItem('merrimates_friends', JSON.stringify(friends));
+        localStorage.setItem('merrimates_messages', JSON.stringify(messages));
+        localStorage.setItem('merrimates_conversations', JSON.stringify(conversations));
+        
         if (currentUser) {
           localStorage.setItem('merrimates_current_user', JSON.stringify(currentUser));
         } else {
           localStorage.removeItem('merrimates_current_user');
         }
       } catch (error) {
-        console.error('Error saving current user to localStorage:', error);
+        console.error('Error saving data to localStorage:', error);
       }
     }
-  }, [currentUser, isLoading]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      try {
-        localStorage.setItem('merrimates_friends', JSON.stringify(friends));
-      } catch (error) {
-        console.error('Error saving friends to localStorage:', error);
-      }
-    }
-  }, [friends, isLoading]);
+  }, [users, friends, messages, conversations, currentUser, isLoading]);
 
   const handleLogin = (username: string, password: string) => {
     const user = users.find(
@@ -122,6 +117,7 @@ export default function App() {
     age: number;
     pronouns: string;
     location: { city: string; country: string };
+    profilePicture?: string;
   }) => {
     setTempUser(prev => ({ ...prev, ...profile }));
     setCurrentPage('hobbies');
@@ -143,7 +139,7 @@ export default function App() {
       personality,
       lookingFor,
       blockedUsers: [],
-      profilePicture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${tempUser.username}`,
+      profilePicture: tempUser.profilePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${tempUser.username}`,
     } as User;
     
     setUsers(prev => [...prev, completeUser]);
@@ -213,6 +209,52 @@ export default function App() {
     }
   };
 
+  const handleSendMessage = (recipientUsername: string, content: string) => {
+    if (!currentUser) return;
+
+    const messageId = Date.now().toString();
+    const newMessage: Message = {
+      id: messageId,
+      sender: currentUser.username,
+      recipient: recipientUsername,
+      content,
+      timestamp: new Date(),
+      read: false,
+    };
+
+    setMessages(prev => [...prev, newMessage]);
+
+    // Update or create conversation
+    const conversationId = [currentUser.username, recipientUsername].sort().join('-');
+    setConversations(prev => {
+      const existingConv = prev.find(c => c.id === conversationId);
+      if (existingConv) {
+        return prev.map(c => 
+          c.id === conversationId 
+            ? { ...c, lastMessage: newMessage, updatedAt: new Date() }
+            : c
+        );
+      } else {
+        const newConversation: Conversation = {
+          id: conversationId,
+          participants: [currentUser.username, recipientUsername],
+          lastMessage: newMessage,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        return [...prev, newConversation];
+      }
+    });
+  };
+
+  const handleMarkMessageAsRead = (messageId: string) => {
+    setMessages(prev =>
+      prev.map(msg =>
+        msg.id === messageId ? { ...msg, read: true } : msg
+      )
+    );
+  };
+
   if (isLoading) {
     return (
       <div 
@@ -270,6 +312,9 @@ export default function App() {
         <MainPage
           currentUser={currentUser}
           friends={friends}
+          users={users}
+          messages={messages}
+          conversations={conversations}
           onLogout={handleLogout}
           onDeleteAccount={handleDeleteAccount}
           onUpdateProfile={handleUpdateProfile}
@@ -277,6 +322,8 @@ export default function App() {
           onRemoveFriend={handleRemoveFriend}
           onBlockUser={handleBlockUser}
           onUnblockUser={handleUnblockUser}
+          onSendMessage={handleSendMessage}
+          onMarkMessageAsRead={handleMarkMessageAsRead}
         />
       )}
     </div>

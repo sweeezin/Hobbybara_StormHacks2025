@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import logoImage from 'figma:asset/028583a9d69cf6549ae89b1e29cda3c69534dfe3.png';
+import { useState } from 'react'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import logoImage from 'figma:asset/8db2754dce63c68a63a57cfc11f0e5cc090f2cc9.png'
 
 interface SignupPageProps {
   onSignup: (username: string, password: string, email: string) => { success: boolean; error?: string };
@@ -12,6 +12,7 @@ interface SignupPageProps {
 export function SignupPage({ onSignup, onBack }: SignupPageProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
@@ -31,6 +32,12 @@ export function SignupPage({ onSignup, onBack }: SignupPageProps) {
     }
     if (!/\d/.test(password)) {
       setError('Password must include at least one number');
+      return;
+    }
+
+    // Validate password confirmation
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
@@ -110,6 +117,19 @@ export function SignupPage({ onSignup, onBack }: SignupPageProps) {
               <p className="text-xs mt-1" style={{ color: '#666' }}>
                 Must be 8-20 characters and include at least one number
               </p>
+            </div>
+
+            <div>
+              <Label style={{ color: '#48573e' }}>Confirm Password</Label>
+              <Input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                className="mt-1 rounded-xl border-2"
+                style={{ borderColor: '#809671' }}
+                maxLength={20}
+              />
             </div>
 
             <div>

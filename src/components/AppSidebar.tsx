@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { User, Friend } from '../types';
-import { ProfileTab } from './ProfileTab';
-import { MessagesTab } from './MessagesTab';
-import { SettingsTab } from './SettingsTab';
-import { FriendsTab } from './FriendsTab';
-import { UserCircle, MessageCircle, Users, Settings, LogOut, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react'
+import { User, Friend, Message, Conversation } from '../types'
+import { ProfileTab } from './ProfileTab'
+import { MessagesTab } from './MessagesTab'
+import { SettingsTab } from './SettingsTab'
+import { FriendsTab } from './FriendsTab'
+import { UserCircle, MessageCircle, Users, Settings, LogOut, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface AppSidebarProps {
   currentUser: User;
@@ -15,9 +15,13 @@ interface AppSidebarProps {
   onUpdateProfile: (updates: Partial<User>) => void;
   onUnblockUser: (username: string) => void;
   friends: Friend[];
+  messages: Message[];
+  conversations: Conversation[];
   onViewFriend: (friend: Friend) => void;
   onRemoveFriend: (username: string) => void;
   onBlockUser: (username: string) => void;
+  onSendMessage: (recipientUsername: string, content: string) => void;
+  onMarkMessageAsRead: (messageId: string) => void;
 }
 
 type Tab = 'none' | 'profile' | 'messages' | 'friends' | 'settings' | 'delete';
@@ -31,9 +35,13 @@ export function AppSidebar({
   onUpdateProfile,
   onUnblockUser,
   friends,
+  messages,
+  conversations,
   onViewFriend,
   onRemoveFriend,
   onBlockUser,
+  onSendMessage,
+  onMarkMessageAsRead,
 }: AppSidebarProps) {
   const [activeTab, setActiveTab] = useState<Tab>('none');
 
@@ -131,7 +139,14 @@ export function AppSidebar({
             <ProfileTab currentUser={currentUser} onUpdateProfile={onUpdateProfile} />
           )}
           {activeTab === 'messages' && (
-            <MessagesTab currentUser={currentUser} friends={friends} />
+            <MessagesTab 
+              currentUser={currentUser} 
+              friends={friends}
+              messages={messages}
+              conversations={conversations}
+              onSendMessage={onSendMessage}
+              onMarkMessageAsRead={onMarkMessageAsRead}
+            />
           )}
           {activeTab === 'friends' && (
             <FriendsTab

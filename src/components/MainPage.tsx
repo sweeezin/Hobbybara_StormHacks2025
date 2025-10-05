@@ -1,16 +1,19 @@
-import { useState, useMemo } from 'react';
-import { User, Friend } from '../types';
-import { AppSidebar } from './AppSidebar';
-import { SearchResults } from './SearchResults';
-import { UserProfile } from './UserProfile';
-import { Input } from './ui/input';
-import { Search, Menu } from 'lucide-react';
-import { hobbies } from '../data/hobbies';
-import { cities } from '../data/cities';
+import { useState, useMemo } from 'react'
+import { User, Friend, Message, Conversation } from '../types'
+import { AppSidebar } from './AppSidebar'
+import { SearchResults } from './SearchResults'
+import { UserProfile } from './UserProfile'
+import { Input } from './ui/input'
+import { Search, Menu } from 'lucide-react'
+import { hobbies } from '../data/hobbies'
+import { cities } from '../data/cities'
 
 interface MainPageProps {
   currentUser: User;
   friends: Friend[];
+  users: User[];
+  messages: Message[];
+  conversations: Conversation[];
   onLogout: () => void;
   onDeleteAccount: () => void;
   onUpdateProfile: (updates: Partial<User>) => void;
@@ -18,6 +21,8 @@ interface MainPageProps {
   onRemoveFriend: (username: string) => void;
   onBlockUser: (username: string) => void;
   onUnblockUser: (username: string) => void;
+  onSendMessage: (recipientUsername: string, content: string) => void;
+  onMarkMessageAsRead: (messageId: string) => void;
 }
 
 // Generate mock users
@@ -56,6 +61,9 @@ const generateMockUsers = (): Friend[] => {
 export function MainPage({
   currentUser,
   friends,
+  users,
+  messages,
+  conversations,
   onLogout,
   onDeleteAccount,
   onUpdateProfile,
@@ -63,6 +71,8 @@ export function MainPage({
   onRemoveFriend,
   onBlockUser,
   onUnblockUser,
+  onSendMessage,
+  onMarkMessageAsRead,
 }: MainPageProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -121,6 +131,7 @@ export function MainPage({
         onRemoveFriend={onRemoveFriend}
         onBlockUser={onBlockUser}
         onUnblockUser={onUnblockUser}
+        onSendMessage={onSendMessage}
       />
     );
   }
@@ -141,9 +152,13 @@ export function MainPage({
         onUpdateProfile={onUpdateProfile}
         onUnblockUser={onUnblockUser}
         friends={friends}
+        messages={messages}
+        conversations={conversations}
         onViewFriend={handleViewProfile}
         onRemoveFriend={onRemoveFriend}
         onBlockUser={onBlockUser}
+        onSendMessage={onSendMessage}
+        onMarkMessageAsRead={onMarkMessageAsRead}
       />
 
       <div className="flex-1 flex flex-col p-6 overflow-hidden">

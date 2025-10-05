@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Friend, User } from '../types';
 import { Button } from './ui/button';
-import { ArrowLeft, UserPlus, MessageCircle, UserMinus, Ban, UserCheck } from 'lucide-react';
+import { Input } from './ui/input';
+import { ArrowLeft, UserPlus, MessageCircle, UserMinus, Ban, UserCheck, Send } from 'lucide-react';
 import { MapPin } from 'lucide-react';
 
 interface UserProfileProps {
@@ -13,6 +15,7 @@ interface UserProfileProps {
   onRemoveFriend: (username: string) => void;
   onBlockUser: (username: string) => void;
   onUnblockUser: (username: string) => void;
+  onSendMessage: (recipientUsername: string, content: string) => void;
 }
 
 export function UserProfile({
@@ -25,7 +28,19 @@ export function UserProfile({
   onRemoveFriend,
   onBlockUser,
   onUnblockUser,
+  onSendMessage,
 }: UserProfileProps) {
+  const [messageText, setMessageText] = useState('');
+  const [showMessageBox, setShowMessageBox] = useState(false);
+
+  const handleSendMessage = () => {
+    if (messageText.trim()) {
+      onSendMessage(user.username, messageText);
+      setMessageText('');
+      setShowMessageBox(false);
+      // Could show a success toast here
+    }
+  };
   return (
     <div 
       className="size-full p-6 overflow-auto"
@@ -103,7 +118,7 @@ export function UserProfile({
               ) : (
                 <>
                   <Button
-                    onClick={() => alert('Messaging feature coming soon!')}
+                    onClick={() => setShowMessageBox(!showMessageBox)}
                     className="flex-1 rounded-xl"
                     style={{ backgroundColor: '#48573e', color: '#faf2e6' }}
                   >
@@ -143,6 +158,37 @@ export function UserProfile({
             </>
           )}
         </div>
+
+        {/* Message Box */}
+        {showMessageBox && isFriend && !isBlocked && (
+          <div className="mb-6 p-4 rounded-xl" style={{ backgroundColor: 'rgba(180, 199, 167, 0.2)' }}>
+            <h4 className="mb-3" style={{ color: '#48573e' }}>
+              Send a message to {user.nickname}
+            </h4>
+            <div className="flex gap-2">
+              <Input
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1 rounded-xl"
+                style={{ borderColor: '#809671' }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSendMessage();
+                  }
+                }}
+              />
+              <Button
+                onClick={handleSendMessage}
+                disabled={!messageText.trim()}
+                className="rounded-xl"
+                style={{ backgroundColor: '#48573e', color: '#faf2e6' }}
+              >
+                <Send size={20} />
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Hobbies */}
         <div className="mb-6">

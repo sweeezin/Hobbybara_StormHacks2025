@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { cities } from '../data/cities';
+import { useState } from 'react'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import { cities } from '../data/cities'
+import { Upload, User } from 'lucide-react'
 
 interface ProfileSetupPageProps {
   onComplete: (profile: {
@@ -11,6 +12,7 @@ interface ProfileSetupPageProps {
     age: number;
     pronouns: string;
     location: { city: string; country: string };
+    profilePicture?: string;
   }) => void;
 }
 
@@ -20,9 +22,35 @@ export function ProfileSetupPage({ onComplete }: ProfileSetupPageProps) {
   const [pronouns, setPronouns] = useState('');
   const [customPronouns, setCustomPronouns] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [profilePicture, setProfilePicture] = useState<string>('');
   const [error, setError] = useState('');
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [easterEggType, setEasterEggType] = useState<'old' | 'young'>('old');
+
+  const handleProfilePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image must be smaller than 5MB');
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setProfilePicture(result);
+        setError('');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = () => {
     setError('');
@@ -85,6 +113,7 @@ export function ProfileSetupPage({ onComplete }: ProfileSetupPageProps) {
       age: ageNum,
       pronouns: pronouns === 'other' ? customPronouns : pronouns,
       location: { city: selectedLocation.city, country: selectedLocation.country },
+      profilePicture,
     });
   };
 
@@ -156,6 +185,44 @@ export function ProfileSetupPage({ onComplete }: ProfileSetupPageProps) {
               className="mt-1 rounded-xl border-2"
               style={{ borderColor: '#809671' }}
             />
+          </div>
+
+          <div>
+            <Label style={{ color: '#48573e' }}>Profile Picture</Label>
+            <div className="mt-1 flex items-center gap-4">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-2 flex items-center justify-center" 
+                   style={{ borderColor: '#809671', backgroundColor: '#f3f3f5' }}>
+                {profilePicture ? (
+                  <img 
+                    src={profilePicture} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-8 h-8" style={{ color: '#809671' }} />
+                )}
+              </div>
+              <div className="flex-1">
+                <label 
+                  htmlFor="profile-upload"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 cursor-pointer transition-colors hover:bg-gray-50"
+                  style={{ borderColor: '#809671', color: '#48573e' }}
+                >
+                  <Upload className="w-4 h-4" />
+                  Choose Image
+                </label>
+                <input
+                  id="profile-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfilePictureUpload}
+                  className="hidden"
+                />
+                <p className="text-xs mt-1" style={{ color: '#666' }}>
+                  Max 5MB. JPG, PNG, GIF supported.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div>

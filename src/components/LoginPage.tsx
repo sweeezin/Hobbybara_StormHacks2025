@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { User } from '../types';
-import logoImage from 'figma:asset/028583a9d69cf6549ae89b1e29cda3c69534dfe3.png';
+import { useState } from 'react'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { User } from '../types'
+import logoImage from 'figma:asset/8db2754dce63c68a63a57cfc11f0e5cc090f2cc9.png'
 
 interface LoginPageProps {
   onLogin: (username: string, password: string) => boolean;

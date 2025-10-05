@@ -8,6 +8,7 @@ import { cities } from '../data/cities';
 import { hobbies } from '../data/hobbies';
 import { Checkbox } from './ui/checkbox';
 import { ScrollArea } from './ui/scroll-area';
+import { Upload, User as UserIcon } from 'lucide-react';
 
 interface ProfileTabProps {
   currentUser: User;
@@ -24,8 +25,33 @@ export function ProfileTab({ currentUser, onUpdateProfile }: ProfileTabProps) {
   );
   const [selectedHobbies, setSelectedHobbies] = useState<string[]>(currentUser.hobbies || []);
   const [selectedLearning, setSelectedLearning] = useState<string[]>(currentUser.learningInterests || []);
+  const [profilePicture, setProfilePicture] = useState(currentUser.profilePicture || '');
   
   const limitedHobbies = useMemo(() => hobbies.slice(0, 50), []);
+
+  const handleProfilePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image must be smaller than 5MB');
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setProfilePicture(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = () => {
     const selectedLocation = cities.find(c => `${c.city}, ${c.country}` === selectedCity);
@@ -37,6 +63,7 @@ export function ProfileTab({ currentUser, onUpdateProfile }: ProfileTabProps) {
       location: selectedLocation ? { city: selectedLocation.city, country: selectedLocation.country } : currentUser.location,
       hobbies: selectedHobbies,
       learningInterests: selectedLearning,
+      profilePicture,
     });
     
     setEditing(false);
@@ -83,7 +110,7 @@ export function ProfileTab({ currentUser, onUpdateProfile }: ProfileTabProps) {
 
       <div className="flex flex-col items-center">
         <img
-          src={currentUser.profilePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.username}`}
+          src={profilePicture || currentUser.profilePicture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.username}`}
           alt={currentUser.nickname}
           className="w-24 h-24 rounded-full border-4"
           style={{ borderColor: '#48573e' }}
@@ -95,6 +122,41 @@ export function ProfileTab({ currentUser, onUpdateProfile }: ProfileTabProps) {
 
       {editing ? (
         <div className="space-y-4">
+          <div>
+            <Label style={{ color: '#48573e' }}>Profile Picture</Label>
+            <div className="mt-1 flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 flex items-center justify-center" 
+                   style={{ borderColor: '#809671', backgroundColor: '#f3f3f5' }}>
+                {profilePicture ? (
+                  <img 
+                    src={profilePicture} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <UserIcon className="w-6 h-6" style={{ color: '#809671' }} />
+                )}
+              </div>
+              <div className="flex-1">
+                <label 
+                  htmlFor="profile-upload-edit"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-xl border cursor-pointer transition-colors hover:bg-gray-50 text-sm"
+                  style={{ borderColor: '#809671', color: '#48573e' }}
+                >
+                  <Upload className="w-3 h-3" />
+                  Change Photo
+                </label>
+                <input
+                  id="profile-upload-edit"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfilePictureUpload}
+                  className="hidden"
+                />
+              </div>
+            </div>
+          </div>
+
           <div>
             <Label style={{ color: '#48573e' }}>Nickname</Label>
             <Input
