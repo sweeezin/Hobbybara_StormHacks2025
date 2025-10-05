@@ -1,17 +1,11 @@
-# Hobbybara_StormHacks2025
 
-#Project Doc: https://docs.google.com/document/d/1U0qYWyP_b1SeRZU_reR1RrEzXms_-d1L_-pC9pxvoCQ/edit?tab=t.k3fqasnvv2th
+  # User Onboarding Flow
 
-#Dependencies 
--node.js
+  This is a code bundle for User Onboarding Flow. The original project is available at https://www.figma.com/design/0EMYNq38dqrYhxLpgOmPLH/User-Onboarding-Flow.
 
-#RUN THESE COMMANDS IN YOUR LINUX TERMINAL
--sudo apt update
--sudo apt install nodejs
--sudo apt install npm
+  ## Running the code
 
-#How to run
--navigate inside hobby-connect
--run npm install in terminal
--then npm run dev
--go to http://localhost:3000 in ur browser
+  Run `npm i` to install the dependencies.
+
+  Run `npm run dev` to start the development server.
+  
